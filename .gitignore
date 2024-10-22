@@ -1,0 +1,7 @@
+dataset_yolo/*
+testing/*
+logs/*
+og_dataset/*
+__pycache__/*
+downloaded_models/*
+tennis_pose_estimation/*
