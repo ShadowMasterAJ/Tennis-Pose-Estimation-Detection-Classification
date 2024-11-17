@@ -1,0 +1,82 @@
+# Dataset and testing directories
+dataset_yolo/*
+testing/*
+og_dataset/*
+
+# Logs and checkpoints
+logs/*
+checkpoints/*
+
+# Python cache and environment files
+__pycache__/*
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.pyc
+
+# Virtual environment directories
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# VSCode settings
+.vscode/
+
+# Model files
+downloaded_models/*
+tennis_pose_estimation/*
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE specific files
+.idea/
+*.iml
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.swp
+*.swo
+*.bak
+*.orig
+
+# Compiled files
+*.o
+*.so
+*.a
+*.out
+
+# Package files
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+wheels/
+*.manifest
+*.spec
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+.tox/

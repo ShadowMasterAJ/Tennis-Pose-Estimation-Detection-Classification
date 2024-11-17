@@ -1,0 +1,11 @@
+import os
+
+class Config:
+    IMAGE_SIZE = (640, 640)
+    NUM_KEYPOINTS = 18
+    NUM_CLASSES = 4
+    BATCH_SIZE = 16
+    LEARNING_RATE = 1e-4
+    EPOCHS = 50
+    LOG_DIR = 'logs'
+    DATASET_PATH = 'path_to_your_dataset.json'
