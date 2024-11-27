@@ -11,7 +11,8 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
 
 # model = YOLO("tennis_pose_estimation\\tennis_pose_estimation_continued\weights\\best.pt").to(device)
-model = YOLO("tennis_pose_estimation\\tennis_pose_estimation_nano2\weights\\best.pt").to(device)
+# model = YOLO("tennis_pose_estimation\\tennis_pose_estimation\weights\\best.pt").to(device)
+model = YOLO("downloaded_models\\yolo11m-pose.pt").to(device)
 
 def process_media(input_path, output_dir, is_video=True):
     os.makedirs(output_dir, exist_ok=True)
@@ -176,11 +177,11 @@ def compare_models(input_path, output_dir, model1, model2, is_video=True):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process media files for pose estimation")
     parser.add_argument("input_path", help="Path to the input video or image file")
-    parser.add_argument("--output_dir", default="testing/runs_tennisconv1", help="Directory to save the output file")
+    parser.add_argument("--output_dir", default="testing/runs_yolo", help="Directory to save the output file")
     parser.add_argument("--image", action="store_true", help="Process as image instead of video")
     args = parser.parse_args()
 
     process_media(args.input_path, args.output_dir, not args.image)
 
 # Example usage:
-# python .\inference_yolo.py testing/test4.mp4
+# python .\inference_yolo.py testing/test2.mp4

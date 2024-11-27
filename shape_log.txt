@@ -1,3 +1,4 @@
+
 layer                                     name  gradient   parameters                shape         mu      sigma
     0                      model.0.conv.weight     False          432        [16, 3, 3, 3]   -0.00314      0.162 torch.float32
     1                        model.0.bn.weight     False           16                 [16]       2.88       1.74 torch.float32

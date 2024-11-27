@@ -131,15 +131,15 @@ import cv2
 import torch
 import argparse
 import json
-from models.tennis_conv import TennisConv
+from models.tennis_conv import TennisConv, TennisConvResidual, EnhancedTennisConv
 from utils.inference_utils import draw_keypoints_and_skeleton, get_player_direction
 import numpy as np
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
 
-model = TennisConv().to(device)
-checkpoint = torch.load("checkpoints\\best_model.pth.tar",weights_only=True, map_location=device)
+model = EnhancedTennisConv(backbone_name='efficientnet_b7').to(device)
+checkpoint = torch.load("checkpointsEnhanced\\best_model.pth.tar",weights_only=True, map_location=device)
 model.load_state_dict(checkpoint['state_dict'])
 model.eval()
 
@@ -221,6 +221,7 @@ def process_media(input_path, output_dir, is_video=True):
             
             out.write(frame)
             inference_data.append(frame_data)
+            print(f"Frame {frame_count} processed")
             frame_count += 1
 
         video.release()
@@ -264,4 +265,4 @@ if __name__ == "__main__":
     process_media(args.input_path, args.output_dir, not args.image)
 
 # Example usage:
-# python .\inference_tennisconv.py testing/test3.mp4
+# python .\inference_tennisconv.py testing/test2.mp4

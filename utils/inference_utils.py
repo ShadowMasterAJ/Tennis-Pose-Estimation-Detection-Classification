@@ -62,7 +62,7 @@ def draw_keypoints_and_skeleton(img, keypoints):
         [14, 16],
         [15, 17]
     ]
-    import numpy as np
+
     # Create a black frame
     black_frame = np.zeros_like(img)
     
@@ -80,40 +80,34 @@ def draw_keypoints_and_skeleton(img, keypoints):
         for kp in keypoints[0]
     ]
 
-    # Draw skeleton
-    for i, (start, end) in enumerate(skeleton):
-        if all(kp > 0 for kp in scaled_keypoints[start-1]) and all(kp > 0 for kp in scaled_keypoints[end-1]):
-            start_point = tuple(map(int, scaled_keypoints[start-1]))
-            end_point = tuple(map(int, scaled_keypoints[end-1]))
-            cv2.line(black_frame, start_point, end_point, joint_colors[i % len(joint_colors)], 2)
+    # # Draw skeleton
+    # for i, (start, end) in enumerate(skeleton):
+    #     if all(kp > 0 for kp in scaled_keypoints[start-1]) and all(kp > 0 for kp in scaled_keypoints[end-1]):
+    #         start_point = tuple(map(int, scaled_keypoints[start-1]))
+    #         end_point = tuple(map(int, scaled_keypoints[end-1]))
+    #         cv2.line(black_frame, start_point, end_point, joint_colors[i % len(joint_colors)], 2)
 
-    # Draw and label keypoints
-    keypoint_labels = ["nose", "left_eye", "right_eye", "left_ear", "right_ear", "left_shoulder", "right_shoulder", "left_elbow", "right_elbow", "left_wrist", "right_wrist", "left_hip", "right_hip", "left_knee", "right_knee", "left_ankle", "right_ankle", "neck"]
-    for i, (x, y) in enumerate(scaled_keypoints):
-        cv2.circle(black_frame, (x, y), 5, (255, 255, 255), -1)
-        cv2.circle(black_frame, (x, y), 2, (0, 0, 0), -1)
-        cv2.putText(black_frame, keypoint_labels[i], (x+5, y+5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
-    # Show the black frame with centered skeleton
-    cv2.namedWindow('Skeleton Visualization', cv2.WINDOW_NORMAL)
-    cv2.imshow('Skeleton Visualization', black_frame)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # # Draw and label keypoints
+    # keypoint_labels = ["nose", "left_eye", "right_eye", "left_ear", "right_ear", "left_shoulder", "right_shoulder", "left_elbow", "right_elbow", "left_wrist", "right_wrist", "left_hip", "right_hip", "left_knee", "right_knee", "left_ankle", "right_ankle", "neck"]
+    # for i, (x, y) in enumerate(scaled_keypoints):
+    #     cv2.circle(black_frame, (x, y), 5, (255, 255, 255), -1)
+    #     cv2.circle(black_frame, (x, y), 2, (0, 0, 0), -1)
+    #     cv2.putText(black_frame, keypoint_labels[i], (x+5, y+5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
     
+    # # Show the black frame with centered skeleton
+    # cv2.namedWindow('Skeleton Visualization', cv2.WINDOW_NORMAL)
+    # cv2.imshow('Skeleton Visualization', black_frame)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
     
     for j, (x, y) in enumerate(keypoints[0]):
         cv2.circle(img, (int(x), int(y)), 3, joint_colors[j], -1)
-        cv2.putText(img, str(j+1), (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
-    # Visualize the frame
-    cv2.imshow('Frame', img)
-    cv2.waitKey(0)  # Wait for any key press
-    cv2.destroyAllWindows()  # Close the window after key press
-    
-    for i, (start_point, end_point) in enumerate(skeleton):
-        start_idx, end_idx = start_point - 1, end_point-1
-        if all(v > 0 for v in keypoints[0][start_idx] + keypoints[0][end_idx]):
-            start = tuple(map(int, keypoints[0][start_idx]))
-            end = tuple(map(int, keypoints[0][end_idx]))
-            cv2.line(img, start, end, joint_colors[i % len(joint_colors)], 2)
+        # cv2.putText(img, str(j+1), (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+    # # Visualize the frame
+    # cv2.imshow('Frame', img)
+    # cv2.waitKey(0)  # Wait for any key press
+    # cv2.destroyAllWindows()  # Close the window after key press
+ 
     
     for i, (start, end) in enumerate(skeleton):
         if all(kp > 0 for kp in keypoints[0][start-1]) and all(kp > 0 for kp in keypoints[0][end-1]):
@@ -121,6 +115,6 @@ def draw_keypoints_and_skeleton(img, keypoints):
             end_point = tuple(map(int, keypoints[0][end-1]))
             cv2.line(img, start_point, end_point, joint_colors[i % len(joint_colors)], 2)
 
-    cv2.imshow('Frame', img)
-    cv2.waitKey(0)  # Wait for any key press
-    cv2.destroyAllWindows()  # Close the window after key press
+    # cv2.imshow('Frame', img)
+    # cv2.waitKey(0)  # Wait for any key press
+    # cv2.destroyAllWindows()  # Close the window after key press

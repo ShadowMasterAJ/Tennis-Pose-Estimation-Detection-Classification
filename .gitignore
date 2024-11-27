@@ -80,3 +80,8 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 .tox/
+
+logs_brnn/
+logs_enhanced/
+*.tar
+*.pt

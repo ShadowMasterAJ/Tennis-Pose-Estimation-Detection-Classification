@@ -5,7 +5,7 @@ class Config:
     SEED = 42  # For reproducibility
 
     # Training Parameters
-    BATCH_SIZE = 32
+    BATCH_SIZE = 16
     LEARNING_RATE = 3e-4
     EPOCHS = 250
     EARLY_STOPPING_PATIENCE = 10  # Early stopping patience
@@ -13,21 +13,21 @@ class Config:
     RESUME_TRAINING = False  # If True, resume from checkpoint
 
     # Optimizer Parameters
-    OPTIMIZER = 'sgd'  # Options: 'adam', 'sgd', 'adamw'
+    OPTIMIZER = 'adamw'  # Options: 'adam', 'sgd', 'adamw'
     MOMENTUM = 0.9  # Momentum factor (for SGD optimizer)
     WEIGHT_DECAY = 1e-4  # L2 regularization (weight decay)
     
     # Learning Rate Scheduler Parameters
-    LR_SCHEDULER = 'CosineAnnealingLR'  # Options: 'ReduceLROnPlateau', 'StepLR', 'CosineAnnealingLR'
+    LR_SCHEDULER = 'OneCycleLR'  # Options: 'ReduceLROnPlateau', 'StepLR', 'CosineAnnealingLR'
     LR_SCHEDULER_PATIENCE = 5  # ReduceLROnPlateau patience before reducing LR
     LR_SCHEDULER_FACTOR = 0.1  # ReduceLROnPlateau LR reduction factor
     LR_STEP_SIZE = 10  # For StepLR, steps before reducing LR
     LR_GAMMA = 0.1  # LR reduction factor for StepLR
     
-    LOG_DIR = 'logs_brnn'
+    LOG_DIR = 'logs_res'
     
     # Regularization Parameters
-    DROPOUT_RATE = 0.15  # Dropout rate for model layers
+    DROPOUT_RATE = 0.25  # Dropout rate for model layers
     BATCH_NORM = True  # Use batch normalization or not
 
     # Model Architecture Parameters
@@ -63,7 +63,7 @@ class Config:
     }
 
     # Checkpointing Parameters
-    CHECKPOINT_DIR = 'checkpoints_brnn'
+    CHECKPOINT_DIR = 'checkpointsEnhanced'
     SAVE_BEST_ONLY = True  # If True, only save the best-performing model
     SAVE_EVERY_EPOCH = True  # If True, save the model after every epoch
     
