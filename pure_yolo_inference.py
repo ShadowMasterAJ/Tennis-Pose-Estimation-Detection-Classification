@@ -18,16 +18,16 @@ output_path = 'testing\\runs_yolo\\test2.mp4'
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
 
+# Run YOLO inference
+model = YOLO("tennis_pose_estimation\\tennis_pose_estimation_m_13\\weights\\best.pt",task='pose')  # load an official model
+
+# run the model on each frame of the video test2 and save the result video
+results = model.predict("testing\\test2.mp4",stream=True, device=0,line_width=1)
+
 while cap.isOpened():
     ret, frame = cap.read()
     if not ret:
         break
-
-    # Run YOLO inference
-    model = YOLO("downloaded_models\\yolo11m-pose.pt",task='pose')  # load an official model
-
-    # run the model on each frame of the video test2 and save the result video
-    results = model.predict("testing\\test2.mp4",stream=True, device=0, kpt_radius=2)
 
     for i, r in enumerate(results):
         # Plot results image

@@ -1,47 +1,83 @@
 from sklearn.model_selection import train_test_split
 import torch
 from torch.utils.data import Dataset
-import numpy as np 
 from PIL import Image
 import json
 import os
 import shutil
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
 
 import numpy as np
 import torch
 from torch.utils.data import Dataset
 from PIL import Image
-import albumentations as A
 from torchvision import transforms
 
 class TennisDataset(Dataset):
-    def __init__(self, data, transform=None):
+    def __init__(self, data, transform=None, sequence_length=16):
+        """
+        Args:
+            data (list): A list of dictionaries with keys 'image_path', 'bbox', 'keypoints', 'label'.
+            transform (callable, optional): Optional transform to be applied to each frame.
+            sequence_length (int): Number of frames in each sequence.
+        """
         self.data = data
         self.transform = transform
-    
+        self.sequence_length = sequence_length
+        self.grouped_data = self._group_sequences()
+
+    def _group_sequences(self):
+        """
+        Group frames into sequences based on their label (e.g., video ID or shot type).
+        Assumes data is sorted by some temporal property (e.g., video frame order).
+        """
+        grouped = {}
+        for item in self.data:
+            label = item['label']  # You can also use a unique 'video_id' if available
+            if label not in grouped:
+                grouped[label] = []
+            grouped[label].append(item)
+        
+        sequences = []
+        for label, frames in grouped.items():
+            for i in range(len(frames) - self.sequence_length + 1):
+                sequences.append(frames[i:i + self.sequence_length])
+        
+        return sequences
+
     def __len__(self):
-        return len(self.data)
-    
+        return len(self.grouped_data)
+
     def __getitem__(self, idx):
-        item = self.data[idx]
-        image = Image.open(item['image_path']).convert('RGB')
+        """
+        Returns:
+            frames (Tensor): A sequence of frames with shape (sequence_length, C, H, W).
+            bboxes (Tensor): Corresponding bounding boxes for the sequence (sequence_length, 4).
+            keypoints (Tensor): Corresponding keypoints for the sequence (sequence_length, num_keypoints * 3).
+            label (int): Shot type label for the sequence.
+        """
+        sequence = self.grouped_data[idx]
         
-        width, height = image.size  # Get original image dimensions
-
-        # Normalize bbox and keypoints based on original dimensions
-        bbox = normalize_bbox(item['bbox'], width, height)
-        keypoints = normalize_keypoints(item['keypoints'], width, height)
-
-        if self.transform:
-            image = self.transform(image)
-
-        bbox = torch.tensor(bbox, dtype=torch.float32)
-        keypoints = torch.tensor(keypoints, dtype=torch.float32)
-        label = torch.tensor(['backhand', 'forehand', 'serve', 'ready_position'].index(item['label']))
+        frames = []
+        bboxes = []
+        keypoints = []
+        labels = []
         
-        return image, bbox, keypoints, label
+        for item in sequence:
+            image = Image.open(item['image_path']).convert("RGB")
+            if self.transform:
+                image = self.transform(image)
+            frames.append(image)
+            bboxes.append(torch.tensor(item['bbox'], dtype=torch.float32))
+            keypoints.append(torch.tensor(item['keypoints'], dtype=torch.float32))
+            labels.append(item['label'])
+
+        # Stack tensors
+        frames = torch.stack(frames)  # (sequence_length, C, H, W)
+        bboxes = torch.stack(bboxes)  # (sequence_length, 4)
+        keypoints = torch.stack(keypoints)  # (sequence_length, num_keypoints * 3)
+        label = torch.tensor(['backhand', 'forehand', 'serve', 'ready_position'].index(sequence[0]['label']))  # Assuming the label is the same for the entire sequence
+
+        return frames, bboxes, keypoints, label
 
 def get_transform(train: bool = True) -> transforms.Compose:
     """ Define transformations for training and validation datasets. """

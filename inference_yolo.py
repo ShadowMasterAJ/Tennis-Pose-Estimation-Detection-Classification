@@ -10,11 +10,7 @@ from utils.inference_utils import draw_keypoints_and_skeleton, get_player_direct
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
 
-# model = YOLO("tennis_pose_estimation\\tennis_pose_estimation_continued\weights\\best.pt").to(device)
-# model = YOLO("tennis_pose_estimation\\tennis_pose_estimation\weights\\best.pt").to(device)
-model = YOLO("downloaded_models\\yolo11m-pose.pt").to(device)
-
-def process_media(input_path, output_dir, is_video=True):
+def process_media(input_path, output_dir,model='', is_video=True):
     os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, os.path.basename(input_path))
     data_output_path = os.path.join(output_dir, os.path.splitext(os.path.basename(input_path))[0] + '_data.json')
@@ -119,8 +115,8 @@ def compare_models(input_path, output_dir, model1, model2, is_video=True):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
     # Process media for both models
-    inference_data1 = process_media(input_path, output_dir, is_video, model1, suffix="_model1")
-    inference_data2 = process_media(input_path, output_dir, is_video, model2, suffix="_model2")
+    inference_data1 = process_media(input_path, output_dir, model1, is_video)
+    inference_data2 = process_media(input_path, output_dir, model2, is_video)
     
     if is_video:
         video = cv2.VideoCapture(input_path)
@@ -177,11 +173,16 @@ def compare_models(input_path, output_dir, model1, model2, is_video=True):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process media files for pose estimation")
     parser.add_argument("input_path", help="Path to the input video or image file")
-    parser.add_argument("--output_dir", default="testing/runs_yolo", help="Directory to save the output file")
+    parser.add_argument("--output_dir", default="testing/runs_yolo1_3", help="Directory to save the output file")
     parser.add_argument("--image", action="store_true", help="Process as image instead of video")
     args = parser.parse_args()
 
-    process_media(args.input_path, args.output_dir, not args.image)
+    model1 = YOLO("tennis_pose_estimation\\tennis_pose_estimation_m_16\\weights\\best.pt").to(device)
+    # model2 = YOLO("tennis_pose_estimation\\tennis_pose_estimation_m_13\\weights\\best.pt").to(device)
+
+    process_media(args.input_path, args.output_dir, model1, not args.image)
+    # compare_models(args.input_path, args.output_dir, model1, model2, not args.image)
+    
 
 # Example usage:
-# python .\inference_yolo.py testing/test2.mp4
+# python .\inference_yolo.py testing/test4.mp4

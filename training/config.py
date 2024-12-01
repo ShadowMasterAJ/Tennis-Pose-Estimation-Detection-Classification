@@ -8,12 +8,12 @@ class Config:
     BATCH_SIZE = 32
     LEARNING_RATE = 3e-4
     EPOCHS = 250
-    EARLY_STOPPING_PATIENCE = 10  # Early stopping patience
+    EARLY_STOPPING_PATIENCE = 20  # Early stopping patience
     GRAD_CLIP = 1.0  # Gradient clipping to prevent exploding gradients
-    RESUME_TRAINING = False  # If True, resume from checkpoint
+    RESUME_TRAINING = True  # If True, resume from checkpoint
 
     # Optimizer Parameters
-    OPTIMIZER = 'sgd'  # Options: 'adam', 'sgd', 'adamw'
+    OPTIMIZER = 'adamw'  # Options: 'adam', 'sgd', 'adamw'
     MOMENTUM = 0.9  # Momentum factor (for SGD optimizer)
     WEIGHT_DECAY = 1e-4  # L2 regularization (weight decay)
     
@@ -40,19 +40,22 @@ class Config:
         'efficientnet_b3': {
             'output_channels': 1536,  # Adjust according to the selected backbone
             'pretrained': True,
-            'freeze_layers': True,  # Whether to freeze the backbone layers
+            'freeze_layers': True
         },
         'resnet50': {
             'output_channels': 2048,
             'pretrained': True,
-            'freeze_layers': True,  # If False, fine-tune the ResNet backbone
+            'freeze_layers': True
         },
         'efficientnet_b7': {
             'output_channels': 2560,
             'pretrained': True,
-            'freeze_layers': True,
+            'freeze_layers': True
         },
-        # Add other backbones as needed
+        'efficientnet_b0':{
+            'output_channels': 1280, 
+            'pretrained': True, 
+            'freeze_layers': True},
     }
 
     # Loss Function Weights
