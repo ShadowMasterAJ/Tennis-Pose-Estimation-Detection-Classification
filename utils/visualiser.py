@@ -15,6 +15,17 @@ def draw_bounding_box(img, bbox, color=(0, 255, 0), thickness=2):
     cv2.rectangle(img, (x, y), (x+w, y+h), color, thickness)
 
 def draw_keypoints_and_skeleton(img, keypoints):
+    """
+    Draws keypoints and skeleton on an image.
+    Parameters:
+    img (numpy.ndarray): The image on which to draw the keypoints and skeleton.
+    keypoints (numpy.ndarray): An array of shape (N, 3) where N is the number of keypoints.
+                               Each keypoint is represented by (x, y, v) where (x, y) are the coordinates
+                               and v is the visibility flag (0: not visible, 1: visible).
+    Returns:
+    None: The function modifies the input image in place by drawing the keypoints and skeleton.
+    """
+    
     joint_colors = [
             (255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0), (255, 0, 255),
             (0, 255, 255), (128, 0, 0), (0, 128, 0), (0, 0, 128), (128, 128, 0),
@@ -35,6 +46,20 @@ def draw_keypoints_and_skeleton(img, keypoints):
             cv2.line(img, start, end, joint_colors[i % len(joint_colors)], 2)
 
 def process_image(img_info, annotation, base_path, img_width, img_height):
+    """
+    Processes an image by reading it from the specified path, converting its color space,
+    and optionally drawing bounding boxes and keypoints based on the provided annotation.
+    Args:
+        img_info (dict): Dictionary containing image metadata, including 'path', 'width', and 'height'.
+        annotation (dict): Dictionary containing annotation data, including 'bbox' and 'keypoints'.
+                           If None, no annotations will be drawn.
+        base_path (str): Base path to the directory containing the image.
+        img_width (int): The width to which the image should be scaled.
+        img_height (int): The height to which the image should be scaled.
+    Returns:
+        numpy.ndarray: The processed image with optional annotations drawn.
+    """
+    
     img_path = f"{base_path}/{img_info['path'].lstrip('../')}"
     img = cv2.imread(img_path)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -52,6 +77,20 @@ def process_image(img_info, annotation, base_path, img_width, img_height):
     return img
 
 def visualise_dataset(json_file, base_path, num_images=2):
+    """
+    Visualises a subset of images from a dataset described in a JSON file.
+    Parameters:
+    json_file (str): Path to the JSON file containing dataset information.
+    base_path (str): Base path to the directory containing the images.
+    num_images (int, optional): Number of images to visualise. Defaults to 2.
+    Returns:
+    matplotlib.figure.Figure: A matplotlib figure object containing the visualised images.
+    The JSON file should contain:
+    - 'images': A list of dictionaries, each with keys 'id', 'file_name', 'width', and 'height'.
+    - 'annotations': A list of dictionaries, each with keys 'image_id' and other annotation details.
+    The function randomly selects `num_images` from the dataset, processes them, and displays them in a matplotlib figure.
+    """
+    
     with open(json_file, 'r') as f:
         data = json.load(f)
 
@@ -77,6 +116,19 @@ import cv2
 import numpy as np
 
 def visualise_dataloader_sample(ax, image, bbox, keypoints, label, title):
+    """
+    Visualize a sample from the dataloader by displaying the image with bounding boxes and keypoints.
+    Parameters:
+        ax (matplotlib.axes.Axes): The axes on which to plot the image.
+        image (torch.Tensor): The image tensor to be visualized.
+        bbox (list or torch.Tensor): The bounding box coordinates in the format [x_min, y_min, x_max, y_max].
+        keypoints (torch.Tensor): The keypoints tensor with shape (num_keypoints, 3).
+        label (int): The label index corresponding to the action class.
+        title (str): The title for the plot.
+    Returns:
+        None
+    """
+    
     # Convert tensor image to numpy array and denormalize
     img_np = image.cpu().permute(1, 2, 0).detach().numpy()  # Ensure it's on CPU and detached
     mean = np.array([0.485, 0.456, 0.406])
@@ -91,7 +143,7 @@ def visualise_dataloader_sample(ax, image, bbox, keypoints, label, title):
     img_rgb = cv2.cvtColor(img_np, cv2.COLOR_RGB2BGR)  # Convert to BGR for OpenCV
     
     # Get image dimensions
-    height, width = img_rgb.shape[:2]
+    height, width = 1,1 #img_rgb.shape[:2]
     
     # Draw bounding box (converting from normalized to pixel space)
     # Expecting bbox in format [x_min, y_min, x_max, y_max]
@@ -118,6 +170,22 @@ def visualise_dataloader_sample(ax, image, bbox, keypoints, label, title):
 
 
 def visualize_results(all_images, all_labels, all_predictions, all_bboxes, all_keypoints, num_samples=3):
+    """
+    Visualize the results of image predictions by displaying the correct and predicted labels side by side.
+    Parameters:
+    - all_images (list or tensor): List or tensor of images.
+    - all_labels (list or tensor): List or tensor of true labels.
+    - all_predictions (list or tensor): List or tensor of predicted labels.
+    - all_bboxes (list or tensor): List or tensor of bounding boxes.
+    - all_keypoints (list or tensor): List or tensor of keypoints.
+    - num_samples (int, optional): Number of samples to visualize. Default is 3.
+    Returns:
+    - fig (matplotlib.figure.Figure): The matplotlib figure object containing the visualizations.
+    The function randomly selects a specified number of samples from the provided data and visualizes them.
+    Each sample is displayed in two columns: one for the correct label and one for the predicted label.
+    Bounding boxes and keypoints are also displayed on the images.
+    """
+    
     fig, axs = plt.subplots(num_samples, 2, figsize=(12, 6*num_samples))
     fig.suptitle('Correct vs Predicted Results', fontsize=16)
 
@@ -165,6 +233,30 @@ def visualize_results(all_images, all_labels, all_predictions, all_bboxes, all_k
     return fig
 
 def process_video(model, input_video_path, output_video_path, device, preprocess_image):
+    """
+    Processes an input video frame by frame, performs inference using a given model, and saves the annotated video.
+    Args:
+        model (torch.nn.Module): The model used for inference.
+        input_video_path (str): Path to the input video file.
+        output_video_path (str): Path to save the output annotated video file.
+        device (torch.device): The device (CPU or GPU) to run the model on.
+        preprocess_image (function): A function to preprocess each frame before inference.
+    Returns:
+        None
+    The function performs the following steps:
+    1. Opens the input video file.
+    2. Retrieves video properties such as width, height, frames per second (fps), and total frames.
+    3. Creates a VideoWriter object to save the output video.
+    4. Processes each frame of the video:
+        - Converts the frame to a PIL Image.
+        - Preprocesses the image and performs inference using the model.
+        - Extracts keypoints, bounding box, and classification results from the model's output.
+        - Draws the bounding box and keypoints on the frame.
+        - Adds the predicted class label to the frame.
+        - Writes the annotated frame to the output video.
+    5. Releases video resources and saves the annotated video.
+    """
+    
     # Open the input video
     cap = cv2.VideoCapture(input_video_path)
     
@@ -192,8 +284,11 @@ def process_video(model, input_video_path, output_video_path, device, preprocess
         with torch.no_grad():
             pred_keypoints, pred_bbox, pred_classification = model(preprocessed_image)
         
+        # Convert the predicted keypoints and bounding box to numpy arrays
         keypoints = pred_keypoints.squeeze().cpu().numpy()
         bbox = pred_bbox.squeeze().cpu().numpy()
+
+        # Convert the predicted class probabilities to numpy array and get the predicted class
         class_probs = F.softmax(pred_classification, dim=1).squeeze().cpu().numpy()
         predicted_class = np.argmax(class_probs)
         

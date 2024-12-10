@@ -6,30 +6,37 @@ class Config:
 
     # Training Parameters
     BATCH_SIZE = 32
-    LEARNING_RATE = 3e-4
+    SEQ_LENGTH = 5  # Sequence length for RNN models
+    LEARNING_RATE = 0.001
     EPOCHS = 250
     EARLY_STOPPING_PATIENCE = 20  # Early stopping patience
     GRAD_CLIP = 1.0  # Gradient clipping to prevent exploding gradients
     RESUME_TRAINING = True  # If True, resume from checkpoint
-
+    GRAD_ACCUMULATION_STEPS = 4
+    IMAGE_SIZE = 320  # Image size for training
+    
     # Optimizer Parameters
-    OPTIMIZER = 'adamw'  # Options: 'adam', 'sgd', 'adamw'
+    OPTIMIZER = 'adam'  # Options: 'adam', 'sgd', 'adamw'
     MOMENTUM = 0.9  # Momentum factor (for SGD optimizer)
     WEIGHT_DECAY = 1e-4  # L2 regularization (weight decay)
     
     # Learning Rate Scheduler Parameters
-    LR_SCHEDULER = 'CosineAnnealingLR'  # Options: 'ReduceLROnPlateau', 'StepLR', 'CosineAnnealingLR'
+    LR_SCHEDULER = 'ReduceLROnPlateau'  # Options: 'ReduceLROnPlateau', 'StepLR', 'CosineAnnealingLR', OneCycleLR
     LR_SCHEDULER_PATIENCE = 5  # ReduceLROnPlateau patience before reducing LR
-    LR_SCHEDULER_FACTOR = 0.1  # ReduceLROnPlateau LR reduction factor
+    LR_SCHEDULER_FACTOR = 0.5  # ReduceLROnPlateau LR reduction factor
     LR_STEP_SIZE = 10  # For StepLR, steps before reducing LR
     LR_GAMMA = 0.1  # LR reduction factor for StepLR
+    LR_MIN = 1e-6  # Minimum LR for ReduceLROnPlateau and CosineAnnealingLR
     
-    LOG_DIR = 'logs_brnn'
+    
+    # Checkpointing Parameters
+    LOG_DIR = 'logs_net'
+    CHECKPOINT_DIR = 'checkpoints_net'
+    SAVE_BEST_ONLY = True  # If True, only save the best-performing model
+    SAVE_EVERY_EPOCH = True  # If True, save the model after every epoch
     
     # Regularization Parameters
-    DROPOUT_RATE = 0.15  # Dropout rate for model layers
-    BATCH_NORM = True  # Use batch normalization or not
-
+    DROPOUT_RATE = 0.4 # Dropout rate for model layers
     # Model Architecture Parameters
     NUM_KEYPOINTS = 18  # Number of keypoints to predict
     NUM_CLASSES = 4  # Number of shot classes
@@ -38,7 +45,7 @@ class Config:
     # Model Layer Configurations
     BACKBONE_LAYERS = {
         'efficientnet_b3': {
-            'output_channels': 1536,  # Adjust according to the selected backbone
+            'output_channels': 1536,
             'pretrained': True,
             'freeze_layers': True
         },
@@ -65,11 +72,6 @@ class Config:
         'classification': 1.0
     }
 
-    # Checkpointing Parameters
-    CHECKPOINT_DIR = 'checkpoints_brnn'
-    SAVE_BEST_ONLY = True  # If True, only save the best-performing model
-    SAVE_EVERY_EPOCH = True  # If True, save the model after every epoch
-    
     @staticmethod
     def get_backbone_layers(backbone_name):
         """Retrieve layer details for the specified backbone."""

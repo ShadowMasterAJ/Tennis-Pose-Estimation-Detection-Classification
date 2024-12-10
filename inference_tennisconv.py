@@ -131,7 +131,7 @@ import cv2
 import torch
 import argparse
 import json
-from models.tennis_conv import TennisConv, TennisConvResidual, EnhancedTennisConv
+from models.tennis_conv import SimpleTennisConv, TennisConvResidual, EnhancedTennisConv
 from utils.inference_utils import draw_keypoints_and_skeleton, get_player_direction
 import numpy as np
 

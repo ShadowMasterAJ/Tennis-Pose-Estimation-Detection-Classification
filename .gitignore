@@ -85,3 +85,6 @@ logs_brnn/
 logs_enhanced/
 *.tar
 *.pt
+logs_net/
+logs_spp/
+tennis_pose_estimation_18kp/
