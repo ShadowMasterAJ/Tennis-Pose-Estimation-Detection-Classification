@@ -232,6 +232,35 @@ def visualize_results(all_images, all_labels, all_predictions, all_bboxes, all_k
     plt.tight_layout()
     return fig
 
+
+def visualize_results(image, true_bbox, pred_bbox, true_keypoints, pred_keypoints,yolo=0):
+    # Create a copy of the image for visualization
+    original_image = image.copy()
+    predicted_image = image.copy()
+
+    # Draw true bounding box and keypoints on the original image
+    cv2.rectangle(original_image, (int(true_bbox[0]), int(true_bbox[1])), (int(true_bbox[2]), int(true_bbox[3])), (0, 255, 0), 2)
+    cv2.rectangle(original_image, (int(pred_bbox[0]), int(pred_bbox[1])), (int(pred_bbox[2]), int(pred_bbox[3])), (0, 0, 255), 2)
+    
+    draw_keypoints_and_skeleton(original_image, [true_keypoints],yolo)
+    
+    if yolo and pred_bbox:
+        # Draw predicted bounding box and keypoints on the predicted image
+        cv2.rectangle(predicted_image, (int(pred_bbox[0]), int(pred_bbox[1])), (int(pred_bbox[2]), int(pred_bbox[3])), (0, 0, 255), 2)
+        draw_keypoints_and_skeleton(predicted_image, [pred_keypoints],yolo)
+    else:
+        # Draw predicted bounding box and keypoints on the predicted image
+        cv2.rectangle(predicted_image, (int(pred_bbox[0]), int(pred_bbox[1])), (int(pred_bbox[2]), int(pred_bbox[3])), (0, 0, 255), 2)
+        draw_keypoints_and_skeleton(predicted_image, [pred_keypoints],yolo)
+
+    # Concatenate the original and predicted images side by side
+    comparison_image = np.concatenate((original_image, predicted_image), axis=1)
+
+    # Display the comparison image
+    cv2.imshow('Original vs Predicted', comparison_image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
 def process_video(model, input_video_path, output_video_path, device, preprocess_image):
     """
     Processes an input video frame by frame, performs inference using a given model, and saves the annotated video.

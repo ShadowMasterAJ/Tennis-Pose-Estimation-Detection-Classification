@@ -241,4 +241,30 @@ if __name__ == "__main__":
     train_dataset_seq, val_dataset_seq, test_dataset_seq = get_datasets(json_files, base_path, sequence_length=5)
     print(f"Sequential - Train: {len(train_dataset_seq)}, Val: {len(val_dataset_seq)}, Test: {len(test_dataset_seq)}")
     
+    # Print a sample of the data for each dataset
+    def print_sample(dataset, name):
+        sample = dataset[0]
+        if dataset.sequence_length:
+            frames, bboxes, keypoints, label = sample
+            print(f"{name} - Sequence Sample:")
+            print(f"Frames shape: {frames.shape}")
+            print(f"BBoxes shape: {bboxes.shape}")
+            print(f"Keypoints shape: {keypoints.shape}")
+            print(f"Label: {label}")
+        else:
+            image, bboxes, keypoints, label = sample
+            print(f"{name} - Sample:")
+            print(f"Image shape: {image.shape}")
+            print(f"BBoxes: {bboxes}")
+            print(f"Keypoints: {keypoints}")
+            print(f"Label: {label}")
+        print('\n')
+
+    print_sample(train_dataset, "Train Dataset")
+    print_sample(val_dataset, "Validation Dataset")
+    print_sample(test_dataset, "Test Dataset")
+    print('\n')
+    print_sample(train_dataset_seq, "Train Dataset Sequential")
+    print_sample(val_dataset_seq, "Validation Dataset Sequential")
+    print_sample(test_dataset_seq, "Test Dataset Sequential")
 

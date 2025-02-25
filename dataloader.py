@@ -3,6 +3,7 @@ import os
 import random
 import shutil
 from sklearn.model_selection import train_test_split
+from training.config import Config
 from utils.data_utils import *
 from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
@@ -80,14 +81,14 @@ flip_idx: [0, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 16, 15]
 def get_dataloaders(json_files, base_path,batch_size, sequence_length=None):
     train_dataset, val_dataset, test_dataset = get_datasets(json_files, base_path,sequence_length)
 
-    train_loader = DataLoader(train_dataset, batch_size=batch_size,num_workers=4, shuffle=True, pin_memory=True)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size,num_workers=4, shuffle=True, pin_memory=True)
-    test_loader = DataLoader(test_dataset, batch_size=batch_size,num_workers=4, shuffle=True, pin_memory=True)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size,num_workers=0, shuffle=True, pin_memory=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size,num_workers=0, shuffle=True, pin_memory=True)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size,num_workers=0, shuffle=True, pin_memory=True)
 
     return train_loader, val_loader, test_loader
 
 def visualize_nonseq_dataloader_samples():
-    train_loader, val_loader, test_loader = get_dataloaders(json_files, base_path)
+    train_loader, val_loader, test_loader = get_dataloaders(json_files, base_path,batch_size=Config.BATCH_SIZE)
     print('Visualizing non-sequential data samples')
     print(f"Train batches: {len(train_loader)}")
     print(f"Validation batches: {len(val_loader)}")
@@ -123,7 +124,7 @@ def visualize_nonseq_dataloader_samples():
     plt.show()
 
 def visualize_seq_dataloader_samples():
-    train_loader, val_loader, test_loader = get_dataloaders(json_files, base_path,sequence_length=5)
+    train_loader, val_loader, test_loader = get_dataloaders(json_files, base_path,batch_size= 64, sequence_length=5)
 
     print('Visualizing sequential data samples')
     print(f"Train batches: {len(train_loader)}")
@@ -135,7 +136,7 @@ def visualize_seq_dataloader_samples():
     print(f"Sample batch - Bounding boxes shape: {bboxes.shape}")
     print(f"Sample batch - Keypoints shape: {keypoints.shape}")
     print(f"Sample batch - Labels shape: {labels.shape}")
-
+    return
     # Visualize the 5 frames in the sequence for one of the entries in the batch
     fig, axes = plt.subplots(3, 5, figsize=(20, 12))
 
@@ -186,7 +187,7 @@ if __name__ == "__main__":
     # print(f"Labels: {labels.dtype}")
     
     
-    visualize_nonseq_dataloader_samples()
+    # visualize_nonseq_dataloader_samples()
     visualize_seq_dataloader_samples()
     
     

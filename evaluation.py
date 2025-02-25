@@ -6,9 +6,8 @@ from tqdm import tqdm
 from ultralytics import YOLO
 from sklearn.metrics import mean_squared_error
 from dataloader import get_dataloaders
-from utils.inference_utils import visualize_results
+from utils.visualiser import visualize_results
 from models.tennis_conv import SimpleTennisConv, TennisConvResidual, EnhancedTennisConv 
-from models.tennis_brnn import TennisPoseSPP
 from models.tennisnet import TennisNet
 from training.config import Config
 
